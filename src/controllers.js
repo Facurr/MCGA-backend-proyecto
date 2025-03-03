@@ -31,7 +31,7 @@ const registerUser = async (req, res) => {
   }
 };
 
-// 📌 Login de usuario (ahora usa `await bcrypt.compare()`)
+// 📌 Login de usuario (corregido)
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -45,7 +45,7 @@ const loginUser = async (req, res) => {
     console.log("🔎 Contraseña ingresada:", password);
     console.log("🔎 Contraseña guardada en BD:", user.password);
 
-    // Verificar contraseña con `await bcrypt.compare()`
+    // ✅ Verificar correctamente la contraseña sin encriptarla de nuevo
     const isMatch = await bcrypt.compare(password, user.password);
     console.log("🔍 Resultado bcrypt.compare:", isMatch);
 
@@ -74,11 +74,11 @@ const getItems = async (req, res) => {
     const items = await Item.find();
     res.json(items);
   } catch (error) {
-    res.status(500).json({ message: "Error al obtener los items", error });
+    res.status(500).json({ message: "❌ Error al obtener los items", error });
   }
 };
 
-// 📌 Crear un nuevo item
+// 📌 Crear un nuevo item (autenticado)
 const createItem = async (req, res) => {
   try {
     const { name, description, price } = req.body;
@@ -86,38 +86,31 @@ const createItem = async (req, res) => {
     await newItem.save();
     res.status(201).json(newItem);
   } catch (error) {
-    res.status(500).json({ message: "Error al crear el item", error });
+    res.status(500).json({ message: "❌ Error al crear el item", error });
   }
 };
 
-// 📌 Actualizar un item
+// 📌 Actualizar un item (autenticado)
 const updateItem = async (req, res) => {
   try {
     const { id } = req.params;
     const updatedItem = await Item.findByIdAndUpdate(id, req.body, { new: true });
     res.json(updatedItem);
   } catch (error) {
-    res.status(500).json({ message: "Error al actualizar el item", error });
+    res.status(500).json({ message: "❌ Error al actualizar el item", error });
   }
 };
 
-// 📌 Eliminar un item
+// 📌 Eliminar un item (autenticado)
 const deleteItem = async (req, res) => {
   try {
     const { id } = req.params;
     await Item.findByIdAndDelete(id);
     res.json({ message: "✅ Item eliminado correctamente" });
   } catch (error) {
-    res.status(500).json({ message: "Error al eliminar el item", error });
+    res.status(500).json({ message: "❌ Error al eliminar el item", error });
   }
 };
 
 // 📌 Exportar todas las funciones correctamente
-module.exports = { 
-  registerUser, 
-  loginUser, 
-  getItems, 
-  createItem, 
-  updateItem, 
-  deleteItem 
-};
+module.exports = { registerUser, loginUser, getItems, createItem, updateItem, deleteItem };
