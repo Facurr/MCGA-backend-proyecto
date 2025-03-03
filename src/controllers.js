@@ -1,4 +1,4 @@
-const { User, Item } = require("./models"); // Asegúrate de que models.js está correctamente referenciado
+const { User, Item } = require("./models"); // ⚠️ Verifica que models.js está en la carpeta correcta
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -10,7 +10,7 @@ const registerUser = async (req, res) => {
     // Verificar si el usuario ya existe
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(400).json({ message: "El usuario ya existe" });
+      return res.status(400).json({ message: "❌ El usuario ya existe" });
     }
 
     // Encriptar contraseña antes de guardar
@@ -21,14 +21,16 @@ const registerUser = async (req, res) => {
     const user = new User({ name, email, password: hashedPassword });
     await user.save();
 
+    console.log("✅ Usuario registrado con éxito:", user);
+
     res.status(201).json({ message: "✅ Usuario registrado correctamente" });
   } catch (error) {
-    console.error("❌ Error en registro:", error);
+    console.error("❌ Error en el registro:", error);
     res.status(500).json({ message: "Error en el servidor", error });
   }
 };
 
-// 📌 Login de usuario
+// 📌 Login de usuario (Corrección en bcrypt.compare)
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -42,7 +44,7 @@ const loginUser = async (req, res) => {
     console.log("🔎 Contraseña ingresada:", password);
     console.log("🔎 Contraseña guardada en BD:", user.password);
 
-    // Verificar contraseña con bcrypt
+    // Verificar contraseña
     const isMatch = await bcrypt.compare(password, user.password);
     console.log("🔍 Resultado bcrypt.compare:", isMatch);
 
@@ -54,6 +56,8 @@ const loginUser = async (req, res) => {
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
+
+    console.log("✅ Login exitoso, Token generado:", token);
 
     res.json({ token, userId: user._id, name: user.name });
 
@@ -69,7 +73,6 @@ const getItems = async (req, res) => {
     const items = await Item.find();
     res.json(items);
   } catch (error) {
-    console.error("❌ Error al obtener los items:", error);
     res.status(500).json({ message: "Error al obtener los items", error });
   }
 };
@@ -82,7 +85,6 @@ const createItem = async (req, res) => {
     await newItem.save();
     res.status(201).json(newItem);
   } catch (error) {
-    console.error("❌ Error al crear el item:", error);
     res.status(500).json({ message: "Error al crear el item", error });
   }
 };
@@ -94,7 +96,6 @@ const updateItem = async (req, res) => {
     const updatedItem = await Item.findByIdAndUpdate(id, req.body, { new: true });
     res.json(updatedItem);
   } catch (error) {
-    console.error("❌ Error al actualizar el item:", error);
     res.status(500).json({ message: "Error al actualizar el item", error });
   }
 };
@@ -106,10 +107,10 @@ const deleteItem = async (req, res) => {
     await Item.findByIdAndDelete(id);
     res.json({ message: "✅ Item eliminado correctamente" });
   } catch (error) {
-    console.error("❌ Error al eliminar el item:", error);
     res.status(500).json({ message: "Error al eliminar el item", error });
   }
 };
 
 // 📌 Exportar todas las funciones correctamente
 module.exports = { registerUser, loginUser, getItems, createItem, updateItem, deleteItem };
+
