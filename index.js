@@ -3,7 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 
-const routes = require("./src/routes"); // Importar rutas
+const routes = require("./routes"); // Importar rutas
 
 const app = express();
 
@@ -11,13 +11,16 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// 🔍 PASO 2: Debug para verificar que `MONGO_URI` está siendo leído correctamente
+console.log("🔍 MONGO_URI desde process.env:", process.env.MONGO_URI);
+
 // Conectar a MongoDB
 mongoose
     .connect(process.env.MONGO_URI, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     })
-    .then(() => console.log("✅ MongoDB conectado"))
+    .then(() => console.log("✅ MongoDB conectado correctamente"))
     .catch(err => console.error("❌ Error en la conexión a MongoDB:", err));
 
 // Ruta raíz para verificar si el backend funciona
@@ -34,6 +37,7 @@ app.listen(PORT, () => console.log(`✅ Servidor corriendo en puerto ${PORT}`));
 
 // Exportar la app para compatibilidad con Vercel
 module.exports = app;
+
 
 
 
