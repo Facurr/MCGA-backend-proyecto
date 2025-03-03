@@ -1,4 +1,4 @@
-const { User, Item } = require("./models/models"); // ⚠️ Verifica si models.js está en la carpeta correcta
+const { User, Item } = require("./models"); // ⚠️ Verifica si models.js está en la carpeta correcta
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 

@@ -7,9 +7,9 @@ const {
   createItem,
   updateItem,
   deleteItem,
-} = require("./controllers/controllers"); // ⚠️ Verifica si controllers.js está en la carpeta correcta
+} = require("./controllers"); // ⚠️ Verifica si controllers.js está en la carpeta correcta
 
-const authMiddleware = require("./middleware/middleware"); // ⚠️ Verifica si middleware.js está en la carpeta correcta
+const authMiddleware = require("./middleware"); // ⚠️ Verifica si middleware.js está en la carpeta correcta
 
 // Rutas de autenticación (sin autenticación)
 router.post("/register", registerUser);
