@@ -14,15 +14,15 @@ const registerUser = async (req, res) => {
     }
 
     // Generar el salt y encriptar la contraseña correctamente
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword = bcrypt.hashSync(password, salt);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     // Crear el usuario con contraseña encriptada
     const user = new User({ name, email, password: hashedPassword });
     await user.save();
 
     console.log("✅ Usuario registrado con éxito:", user);
-    console.log("🔑 Contraseña guardada (encriptada):", hashedPassword);
+    console.log("🔑 Contraseña guardada (encriptada en BD):", hashedPassword);
 
     res.status(201).json({ message: "✅ Usuario registrado correctamente" });
   } catch (error) {
@@ -31,7 +31,7 @@ const registerUser = async (req, res) => {
   }
 };
 
-// 📌 Login de usuario
+// 📌 Login de usuario (ahora usa `await bcrypt.compare()`)
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -45,8 +45,8 @@ const loginUser = async (req, res) => {
     console.log("🔎 Contraseña ingresada:", password);
     console.log("🔎 Contraseña guardada en BD:", user.password);
 
-    // Verificar contraseña con bcrypt.compareSync()
-    const isMatch = bcrypt.compareSync(password, user.password);
+    // Verificar contraseña con `await bcrypt.compare()`
+    const isMatch = await bcrypt.compare(password, user.password);
     console.log("🔍 Resultado bcrypt.compare:", isMatch);
 
     if (!isMatch) {
