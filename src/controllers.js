@@ -1,4 +1,4 @@
-const { User, Item } = require("./models"); // Verifica que models.js esté en la carpeta correcta
+const { User, Item } = require("./models"); // Asegúrate de que models.js esté en la carpeta correcta
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -55,6 +55,12 @@ const loginUser = async (req, res) => {
 
     console.log("✅ Usuario encontrado en BD:", user);
     console.log("🔑 Contraseña almacenada en BD (encriptada):", user.password);
+
+    // 🔥 Verificación extra para debug
+    console.log("🛠️ Tipo de password ingresado:", typeof password);
+    console.log("🛠️ Tipo de password en BD:", typeof user.password);
+    console.log("🛠️ Longitud password ingresado:", password.length);
+    console.log("🛠️ Longitud password en BD:", user.password.length);
 
     // Comparar contraseñas correctamente
     const isMatch = await bcrypt.compare(password, user.password);
@@ -149,3 +155,4 @@ module.exports = {
   updateItem,
   deleteItem,
 };
+
