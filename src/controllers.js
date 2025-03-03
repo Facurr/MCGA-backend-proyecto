@@ -1,15 +1,15 @@
-const { User, Item } = require("./models"); // Asegúrate de que models.js esté en la carpeta correcta
+const { User, Item } = require("./models"); 
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// 🟢 Registro de usuario
+// 🟢 REGISTRO DE USUARIO
 const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    console.log("🔹 Intentando registrar usuario...");
+    console.log("\n🔹 Intentando registrar usuario...");
     console.log("📧 Email recibido:", email);
-    console.log("🔑 Contraseña ingresada:", password);
+    console.log("🔑 Contraseña ingresada (sin encriptar):", password);
 
     // Verificar si el usuario ya existe
     const userExists = await User.findOne({ email });
@@ -37,12 +37,12 @@ const registerUser = async (req, res) => {
   }
 };
 
-// 🟢 Login de usuario
+// 🟢 LOGIN DE USUARIO
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    console.log("🔹 Intentando login...");
+    console.log("\n🔹 Intentando login...");
     console.log("📧 Email recibido:", email);
     console.log("🔑 Contraseña ingresada (sin encriptar):", password);
 
@@ -56,14 +56,14 @@ const loginUser = async (req, res) => {
     console.log("✅ Usuario encontrado en BD:", user);
     console.log("🔑 Contraseña almacenada en BD (encriptada):", user.password);
 
-    // 🔥 Verificación extra para debug
+    // Verificación de tipos y valores antes de comparar
     console.log("🛠️ Tipo de password ingresado:", typeof password);
     console.log("🛠️ Tipo de password en BD:", typeof user.password);
     console.log("🛠️ Longitud password ingresado:", password.length);
     console.log("🛠️ Longitud password en BD:", user.password.length);
 
     // Comparar contraseñas correctamente
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password.trim(), user.password.trim());
     console.log("🔍 Resultado bcrypt.compare:", isMatch);
 
     if (!isMatch) {
@@ -85,7 +85,7 @@ const loginUser = async (req, res) => {
   }
 };
 
-// 🟢 Obtener todos los items
+// 🟢 OBTENER TODOS LOS ITEMS
 const getItems = async (req, res) => {
   try {
     console.log("🔹 Obteniendo items...");
@@ -97,7 +97,7 @@ const getItems = async (req, res) => {
   }
 };
 
-// 🟢 Crear un nuevo item
+// 🟢 CREAR UN NUEVO ITEM
 const createItem = async (req, res) => {
   try {
     const { name, description, price } = req.body;
@@ -114,7 +114,7 @@ const createItem = async (req, res) => {
   }
 };
 
-// 🟢 Actualizar un item
+// 🟢 ACTUALIZAR UN ITEM
 const updateItem = async (req, res) => {
   try {
     const { id } = req.params;
@@ -130,7 +130,7 @@ const updateItem = async (req, res) => {
   }
 };
 
-// 🟢 Eliminar un item
+// 🟢 ELIMINAR UN ITEM
 const deleteItem = async (req, res) => {
   try {
     const { id } = req.params;
@@ -155,4 +155,3 @@ module.exports = {
   updateItem,
   deleteItem,
 };
-
