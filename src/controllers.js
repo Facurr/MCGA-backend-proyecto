@@ -1,4 +1,4 @@
-const { User, Item } = require("./models"); // Asegúrate de que models.js está en la carpeta correcta
+const { User, Item } = require("./models");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -6,10 +6,10 @@ const jwt = require("jsonwebtoken");
 const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    
+
     console.log("🔹 Intentando registrar usuario...");
     console.log("📧 Email recibido:", email);
-    console.log("🔑 Contraseña ingresada:", password);
+    console.log("🔑 Contraseña ingresada (sin encriptar):", password);
 
     // Verificar si el usuario ya existe
     const userExists = await User.findOne({ email });
@@ -18,10 +18,10 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: "El usuario ya existe" });
     }
 
-    // Encriptar contraseña antes de guardar
+    // 🔹 Generar SALT y encriptar contraseña correctamente
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    
+
     console.log("✅ Contraseña encriptada correctamente:", hashedPassword);
 
     // Crear el usuario con la contraseña encriptada
@@ -44,7 +44,7 @@ const loginUser = async (req, res) => {
 
     console.log("🔹 Intentando login...");
     console.log("📧 Email recibido:", email);
-    console.log("🔑 Contraseña ingresada:", password);
+    console.log("🔑 Contraseña ingresada (sin encriptar):", password);
 
     // Buscar usuario en la base de datos
     const user = await User.findOne({ email });
@@ -54,14 +54,13 @@ const loginUser = async (req, res) => {
     }
 
     console.log("✅ Usuario encontrado en BD:", user);
-    console.log("🔑 Contraseña en BD (encriptada):", user.password);
+    console.log("🔑 Contraseña almacenada en BD (encriptada):", user.password);
+
+    // 🔹 Verificación Adicional: Reencriptar la contraseña ingresada
+    const testHash = await bcrypt.hash(password, 10);
+    console.log("🛠️ Contraseña ingresada (encriptada para prueba):", testHash);
 
     // Comparar contraseñas
-    console.log("🛠️ Tipo de password ingresado:", typeof password);
-    console.log("🛠️ Tipo de password en BD:", typeof user.password);
-    console.log("🛠️ Longitud password ingresado:", password.length);
-    console.log("🛠️ Longitud password en BD:", user.password.length);
-
     const isMatch = await bcrypt.compare(password, user.password);
     console.log("🔍 Resultado bcrypt.compare:", isMatch);
 
