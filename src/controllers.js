@@ -1,4 +1,4 @@
-const { User, Item } = require("./models"); // ⚠️ Verifica que models.js está en la carpeta correcta
+const { User, Item } = require("./models"); 
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -13,9 +13,9 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: "❌ El usuario ya existe" });
     }
 
-    // Encriptar contraseña antes de guardar
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = bcrypt.hashSync(password, salt); // ⚡ Cambio a hashSync para pruebas
+    // Generar el salt y encriptar la contraseña correctamente
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync(password, salt);
 
     // Crear el usuario con contraseña encriptada
     const user = new User({ name, email, password: hashedPassword });
@@ -31,7 +31,7 @@ const registerUser = async (req, res) => {
   }
 };
 
-// 📌 Login de usuario (Depuración de bcrypt.compare)
+// 📌 Login de usuario
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -45,11 +45,7 @@ const loginUser = async (req, res) => {
     console.log("🔎 Contraseña ingresada:", password);
     console.log("🔎 Contraseña guardada en BD:", user.password);
 
-    // 🔎 Prueba manual de encriptación
-    const hashedTest = bcrypt.hashSync(password, 10);
-    console.log("🛠️ Contraseña ingresada (encriptada para prueba):", hashedTest);
-
-    // Verificar contraseña con bcrypt.compare
+    // Verificar contraseña con bcrypt.compareSync()
     const isMatch = bcrypt.compareSync(password, user.password);
     console.log("🔍 Resultado bcrypt.compare:", isMatch);
 
@@ -117,4 +113,11 @@ const deleteItem = async (req, res) => {
 };
 
 // 📌 Exportar todas las funciones correctamente
-module.exports = { registerUser, loginUser, getItems, createItem, updateItem, deleteItem }
+module.exports = { 
+  registerUser, 
+  loginUser, 
+  getItems, 
+  createItem, 
+  updateItem, 
+  deleteItem 
+};
