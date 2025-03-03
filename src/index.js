@@ -28,7 +28,7 @@ mongoose
 
 // Ruta raíz para verificar si el backend funciona
 app.get("/", (req, res) => {
-  res.send("🚀 Backend funcionando correctamente en Vercel");
+  res.send("🚀 Backend funcionando correctamente en Render");
 });
 
 // Rutas de la API
