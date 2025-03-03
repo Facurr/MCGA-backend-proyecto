@@ -7,17 +7,18 @@ const {
   createItem,
   updateItem,
   deleteItem,
-} = require("./controllers");
-const authMiddleware = require("./middleware");
+} = require("./controllers/controllers"); // ⚠️ Verifica si controllers.js está en la carpeta correcta
 
-// Rutas de autenticación
-router.post("/register", registerUser); // Registrar usuario
-router.post("/login", loginUser); // Iniciar sesión
+const authMiddleware = require("./middleware/middleware"); // ⚠️ Verifica si middleware.js está en la carpeta correcta
 
-// Rutas del CRUD (protección con middleware)
-router.get("/items", getItems); // Obtener todos los items (público)
-router.post("/items", authMiddleware, createItem); // Crear item (requiere autenticación)
-router.put("/items/:id", authMiddleware, updateItem); // Actualizar item (requiere autenticación)
-router.delete("/items/:id", authMiddleware, deleteItem); // Eliminar item (requiere autenticación)
+// Rutas de autenticación (sin autenticación)
+router.post("/register", registerUser);
+router.post("/login", loginUser);
+
+// Rutas del CRUD (protegidas con middleware excepto "getItems")
+router.get("/items", getItems); // Público
+router.post("/items", authMiddleware, createItem); // Protegido
+router.put("/items/:id", authMiddleware, updateItem); // Protegido
+router.delete("/items/:id", authMiddleware, deleteItem); // Protegido
 
 module.exports = router;

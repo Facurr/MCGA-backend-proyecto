@@ -1,4 +1,4 @@
-const { User, Item } = require("./models");
+const { User, Item } = require("./models/models"); // ⚠️ Verifica si models.js está en la carpeta correcta
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -13,8 +13,12 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: "El usuario ya existe" });
     }
 
-    // Crear el usuario
-    const user = new User({ name, email, password });
+    // Encriptar contraseña antes de guardar
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Crear el usuario con contraseña encriptada
+    const user = new User({ name, email, password: hashedPassword });
     await user.save();
 
     res.status(201).json({ message: "Usuario registrado correctamente" });
@@ -51,51 +55,49 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
-
 // Obtener todos los items
 const getItems = async (req, res) => {
-    try {
-      const items = await Item.find();
-      res.json(items);
-    } catch (error) {
-      res.status(500).json({ message: "Error al obtener los items", error });
-    }
-  };
-  
-  // Crear un nuevo item
-  const createItem = async (req, res) => {
-    try {
-      const { name, description, price } = req.body;
-      const newItem = new Item({ name, description, price, user: req.userId });
-      await newItem.save();
-      res.status(201).json(newItem);
-    } catch (error) {
-      res.status(500).json({ message: "Error al crear el item", error });
-    }
-  };
-  
-  // Actualizar un item
-  const updateItem = async (req, res) => {
-    try {
-      const { id } = req.params;
-      const updatedItem = await Item.findByIdAndUpdate(id, req.body, { new: true });
-      res.json(updatedItem);
-    } catch (error) {
-      res.status(500).json({ message: "Error al actualizar el item", error });
-    }
-  };
-  
-  // Eliminar un item
-  const deleteItem = async (req, res) => {
-    try {
-      const { id } = req.params;
-      await Item.findByIdAndDelete(id);
-      res.json({ message: "Item eliminado correctamente" });
-    } catch (error) {
-      res.status(500).json({ message: "Error al eliminar el item", error });
-    }
-  };
-  
-  module.exports = { registerUser, loginUser, getItems, createItem, updateItem, deleteItem };
-  
+  try {
+    const items = await Item.find();
+    res.json(items);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener los items", error });
+  }
+};
+
+// Crear un nuevo item
+const createItem = async (req, res) => {
+  try {
+    const { name, description, price } = req.body;
+    const newItem = new Item({ name, description, price, user: req.userId });
+    await newItem.save();
+    res.status(201).json(newItem);
+  } catch (error) {
+    res.status(500).json({ message: "Error al crear el item", error });
+  }
+};
+
+// Actualizar un item
+const updateItem = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedItem = await Item.findByIdAndUpdate(id, req.body, { new: true });
+    res.json(updatedItem);
+  } catch (error) {
+    res.status(500).json({ message: "Error al actualizar el item", error });
+  }
+};
+
+// Eliminar un item
+const deleteItem = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Item.findByIdAndDelete(id);
+    res.json({ message: "Item eliminado correctamente" });
+  } catch (error) {
+    res.status(500).json({ message: "Error al eliminar el item", error });
+  }
+};
+
+// Exportar todas las funciones correctamente
+module.exports = { registerUser, loginUser, getItems, createItem, updateItem, deleteItem };
